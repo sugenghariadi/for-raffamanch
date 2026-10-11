@@ -758,12 +758,15 @@
         });
 
         inst.addEventListener('click', (e) => {
+            // Re-acquire pointer lock if clicking background instruction overlay to resume
             startGameSession();
         });
 
         container.addEventListener('click', (e) => {
             if (isMobile && gameStarted && inst.style.display === 'none') {
                 cycleFlightMode();
+            } else if (!isMobile && gameStarted && inst.style.display !== 'flex' && document.pointerLockElement !== container) {
+                container.requestPointerLock();
             }
         });
 
@@ -1004,8 +1007,8 @@
 
                     let klPitch = 0;
                     let klRoll = 0;
-                    if (keys.i) klPitch += 2.0 * dt; // Inverted: I looks down
-                    if (keys.k) klPitch -= 2.0 * dt; // Inverted: K looks up
+                    if (keys.i) klPitch += 2.0 * dt; 
+                    if (keys.k) klPitch -= 2.0 * dt; 
                     if (keys.j) klRoll -= 2.0 * dt;
                     if (keys.l) klRoll += 2.0 * dt;
 
@@ -1131,7 +1134,7 @@
                 leftY = -(stickyThrottleValue * 2 - 1) * maxPixelOffset; 
                 let klYaw = (keys.d ? 1 : (keys.a ? -1 : 0));
                 let klRollStick = (keys.l ? 1 : (keys.j ? -1 : 0));
-                let klPitchStick = (keys.i ? -1 : (keys.k ? 1 : 0)); // Fixed stick overlay movement (I = up, K = down)
+                let klPitchStick = (keys.i ? -1 : (keys.k ? 1 : 0)); 
                 leftX = klYaw * maxPixelOffset;
                 rawMouseX *= Math.exp(-12.0 * dt); rawMouseY *= Math.exp(-12.0 * dt);
                 rightX = Math.max(-maxPixelOffset, Math.min(maxPixelOffset, (rawMouseX + klRollStick * 20) * 1.4));
